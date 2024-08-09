@@ -1,3 +1,6 @@
+#dev.: Vitorluca
+#version 1.0
+
 import threading as tr
 import datetime as dt
 import random as rd
@@ -13,29 +16,29 @@ lock_chairs = tr.Lock() # create mutex for chairs
 
 # create a function to simulate a client arriving
 def cliente_chega(id_cliente):
-        print(f"Cliente {id_cliente} chegou.")
+        print(f"Cliente {id_cliente} chegou.\n")
         if chairs._value > 0:
             with lock_chairs: # lock sessão critica do codigo
                 chairs.acquire()
-                print(f"Cliente {id_cliente} sentou na cadeira de espera.")
+                print(f"Cliente {id_cliente} sentou na cadeira de espera.\n")
             tm.sleep(3) # tempo para visualização da saida
         else:
-            print(f"Cliente {id_cliente} foi embora sem ser atendido, não há cadeiras de espera disponíveis.") # cliente vai embora
+            print(f"Cliente {id_cliente} foi embora sem ser atendido, não há cadeiras de espera disponíveis.\n") # cliente vai embora
 
 # Função para simular um barbeiro atendendo um cliente
 def barbeiro_atende(id_cliente):
     with lock_barbers:
         for i in range(3):
-            print(f'contador for {i}')
             if barbers[i]._value == 1:
                 barbers[i].acquire() # acorda barbeiro 1
-                print(f"Barbeiro {i} está atendendo o cliente {id_cliente}")
+                print(f"Barbeiro {i} está atendendo o cliente {id_cliente}\n")
                 tm.sleep(3) # tempo para visualização da saida
                 chairs.release() # libera cadeira para cliente
                 barbers[i].release() #libera um barbeiro
-                print(f"Barbeiro {i} terminou de atender e está pronto para o próximo cliente.")
+                print(f"Barbeiro {i} terminou de atender e está pronto para o próximo cliente.\n")
+        
         else:
-            print(f"Todos os Barbeiro estão ocupados, cliente deve esperar.") # barbeiro ocupado
+            print(f"Todos os Barbeiro estão ocupados, cliente deve esperar.\n") # barbeiro ocupado
             
 
 def wrapper(client_number): #involucro para passar parametros para a função
@@ -49,7 +52,7 @@ client_number = 0 # inicializa o contador de clientes
 
 while True:
     tm.sleep(1) # tempo para visualização da saida
-    if rd.randint(0, 1) == 1 or 0: # se o numero aleatorio for 1, um cliente chega
+    if rd.randint(0, 1) == 1: # se o numero aleatorio for 1, um cliente chega
         client = tr.Thread(target=wrapper ,args=(client_number,) ,name=f"Trhead-{client_number}") #cria uma trhead para o cliente
         client.start()
         clients.append(client) # adiciona a trhead cliente a lista de trheads clientes
