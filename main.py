@@ -5,6 +5,7 @@ import threading as tr
 import datetime as dt
 import random as rd
 import time as tm
+import queue 
 
 # Inicializando semáforos para três barbeiros, todos começando "dormindo"
 barbers = [tr.Semaphore(1), tr.Semaphore(1), tr.Semaphore(1)] # create 3 brabers init dormindo
@@ -25,20 +26,26 @@ def cliente_chega(id_cliente):
         else:
             print(f"Cliente {id_cliente} foi embora sem ser atendido, não há cadeiras de espera disponíveis.\n") # cliente vai embora
 
-# Função para simular um barbeiro atendendo um cliente
+barber_queue = queue.Queue()  # Fila para gerenciar a ordem dos barbeiros
+for i in range(3):
+    barber_queue.put(i)  # Inicializa a fila com os índices dos barbeiros
+
 def barbeiro_atende(id_cliente):
-    with lock_barbers:
-        for i in range(3):
+    while True:
+        i = barber_queue.get()  # Obtém o próximo barbeiro da fila
+        with lock_barbers:
             if barbers[i]._value == 1:
-                barbers[i].acquire() # acorda barbeiro 1
+                barbers[i].acquire()  # acorda o barbeiro
                 print(f"Barbeiro {i} está atendendo o cliente {id_cliente}\n")
-                tm.sleep(3) # tempo para visualização da saida
-                chairs.release() # libera cadeira para cliente
-                barbers[i].release() #libera um barbeiro
+                tm.sleep(3)  # tempo para visualização da saída
+                chairs.release()  # libera cadeira para cliente
+                barbers[i].release()  # libera o barbeiro
                 print(f"Barbeiro {i} terminou de atender e está pronto para o próximo cliente.\n")
-        
-        else:
-            print(f"Todos os Barbeiro estão ocupados, cliente deve esperar.\n") # barbeiro ocupado
+                barber_queue.put(i)  # Coloca o barbeiro de volta na fila
+                break  # Sai do loop após o atendimento
+            else:
+                barber_queue.put(i)  # Recoloca o barbeiro na fila se estiver ocupado
+                tm.sleep(1)  # Espera um pouco antes de tentar novamente
             
 
 def wrapper(client_number): #involucro para passar parametros para a função
