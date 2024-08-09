@@ -24,10 +24,10 @@ def cliente_chega(id_cliente):
 
 # Função para simular um barbeiro atendendo um cliente
 def barbeiro_atende(id_cliente):
-    for i in range(3):
-        print(f'contador for {i}')
-        if barbers[i]._value == 1:
-            with lock_barbers:
+    with lock_barbers:
+        for i in range(3):
+            print(f'contador for {i}')
+            if barbers[i]._value == 1:
                 barbers[i].acquire() # acorda barbeiro 1
                 print(f"Barbeiro {i} está atendendo o cliente {id_cliente}")
                 tm.sleep(3) # tempo para visualização da saida
@@ -41,18 +41,6 @@ def barbeiro_atende(id_cliente):
 def wrapper(client_number): #involucro para passar parametros para a função
     cliente_chega(client_number)
     barbeiro_atende(client_number)
-
-    # threads_cliente_chega = tr.Thread(target=cliente_chega,args=(client_number,) ,name=f"Trhead-{client_number}")
-    # threads_barbeiro_atende = tr.Thread(target=barbeiro_atende,args=(client_number,) ,name=f"Trhead-{client_number}")
-
-    # #inicia as trheads
-    # threads_cliente_chega.start()
-    # threads_barbeiro_atende.start()
-
-    # #espera as trheads terminarem
-    # threads_cliente_chega.join()
-    # threads_barbeiro_atende.join()
-
 
 #main code
 clients = [] # cria uma lista de threads para os clientes
