@@ -2,7 +2,7 @@
 #version 1.0
 
 import threading as tr
-import datetime as dt
+from datetime import datetime as dt
 import random as rd
 import time as tm
 import queue 
@@ -17,14 +17,14 @@ lock_chairs = tr.Lock() # create mutex for chairs
 
 # create a function to simulate a client arriving
 def cliente_chega(id_cliente):
-        print(f"Cliente {id_cliente} chegou.\n")
+        print(f"{dt.now().strftime('[%Y-%m-%d %H:%M:%S]')} Cliente {id_cliente} chegou.\n")
         if chairs._value > 0:
             with lock_chairs: # lock sessão critica do codigo
                 chairs.acquire()
-                print(f"Cliente {id_cliente} sentou na cadeira de espera.\n")
+                print(f"{dt.now().strftime('[%Y-%m-%d %H:%M:%S]')} Cliente {id_cliente} sentou na cadeira de espera.\n")
             tm.sleep(3) # tempo para visualização da saida
         else:
-            print(f"Cliente {id_cliente} foi embora sem ser atendido, não há cadeiras de espera disponíveis.\n") # cliente vai embora
+            print(f"{dt.now().strftime('[%Y-%m-%d %H:%M:%S]')} Cliente {id_cliente} foi embora sem ser atendido, não há cadeiras de espera disponíveis.\n") # cliente vai embora
 
 barber_queue = queue.Queue()  # Fila para gerenciar a ordem dos barbeiros
 for i in range(3):
@@ -36,11 +36,11 @@ def barbeiro_atende(id_cliente):
         with lock_barbers:
             if barbers[i]._value == 1:
                 barbers[i].acquire()  # acorda o barbeiro
-                print(f"Barbeiro {i} está atendendo o cliente {id_cliente}\n")
+                print(f"{dt.now().strftime('[%Y-%m-%d %H:%M:%S]')} Barbeiro {i} está atendendo o cliente {id_cliente}\n")
                 tm.sleep(3)  # tempo para visualização da saída
                 chairs.release()  # libera cadeira para cliente
                 barbers[i].release()  # libera o barbeiro
-                print(f"Barbeiro {i} terminou de atender e está pronto para o próximo cliente.\n")
+                print(f"{dt.now().strftime('[%Y-%m-%d %H:%M:%S]')} Barbeiro {i} terminou de atender e está pronto para o próximo cliente.\n")
                 barber_queue.put(i)  # Coloca o barbeiro de volta na fila
                 break  # Sai do loop após o atendimento
             else:
