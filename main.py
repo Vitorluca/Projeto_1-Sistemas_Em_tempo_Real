@@ -5,7 +5,7 @@ import threading as tr
 from datetime import datetime as dt
 import random as rd
 import time as tm
-import queue 
+import queue # create filla
 
 # Inicializando semáforos para três barbeiros, todos começando "dormindo"
 barbers = [tr.Semaphore(1), tr.Semaphore(1), tr.Semaphore(1)] # create 3 brabers init dormindo
